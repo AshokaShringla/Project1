@@ -8,8 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import com.revature.model.Employee;
+import com.revature.model.MTransactions;
 import com.revature.model.Transactions;
 import com.revature.util.ConnectionUtil;
+
+import oracle.net.aso.a;
 
 public class EmployeeRepositoryJdbc implements EmployeeRepository{
 
@@ -223,9 +226,6 @@ public class EmployeeRepositoryJdbc implements EmployeeRepository{
 			return null;
 		}
 	}
-	
-
-//	
 
 	@Override
 	public List<String> allrequests(String username) {
@@ -316,7 +316,6 @@ public class EmployeeRepositoryJdbc implements EmployeeRepository{
 			
 			
 			if(result.next()){
-				System.out.println("hello");
 				return true;
 			}
 			else {
@@ -330,11 +329,265 @@ public class EmployeeRepositoryJdbc implements EmployeeRepository{
 		return false;
 	}
 
-//	public static void main(String[] args) {
-//	EmployeeRepository repository = new EmployeeRepositoryJdbc();
-//	repository.updateUser("Ashok", "Ashoka");
-//	
-//	}
+	@Override
+	public List<String> Mallrequests() {
+
+		try(Connection connection = ConnectionUtil.getConnection()){
+			
+			String sql = "SELECT * FROM \"TRANSACTION\"";
+			
+			PreparedStatement statement= connection.prepareStatement(sql);
+			
+			ResultSet result = statement.executeQuery();
+			
+			
+			List<String> all_transactions = new ArrayList<>();
+//			List<String> pending_transactions = new ArrayList<>();
+//			List<String> resolved_transactions = new ArrayList<>();
+			
+			String id = "";
+			
+			while(result.next()){
+				all_transactions.add(String.valueOf((result.getLong("T_ID"))));
+				all_transactions.add(result.getString("T_NAME"));
+				id = result.getString("T_USER_ID");
+				all_transactions.add(result.getString("T_STATUS"));
+				
+				String sql1 = "SELECT * FROM \"USER\" WHERE U_ID = ?";
+				
+				PreparedStatement statement1= connection.prepareStatement(sql1);
+				statement1.setLong(1, Long.parseLong(id));
+					
+				ResultSet result1 = statement1.executeQuery();
+				
+				if(result1.next()) {
+				all_transactions.add(result1.getString("U_USERNAME"));
+				}
+			}
+			
+			return all_transactions;
+
+		}
+		
+		catch (SQLException e) {
+		}
+		return null;
+	}
+
+	@Override
+	public List<MTransactions> Mallrequests2(List<String> mallrequests) {
+		
+		List<MTransactions> requests = new ArrayList<MTransactions>();
+		MTransactions mtransaction = null;
+		
+		for(int i = 0; i < mallrequests.size()-3; i=i+4) {
+			String a = mallrequests.get(i);
+			String b = mallrequests.get(i+1);
+			String c = mallrequests.get(i+2);
+			String d = mallrequests.get(i+3);
+			mtransaction = new MTransactions(a,b,c,d);
+			requests.add(new MTransactions(a,b,c,d));
+		}
+		return requests;
+	}
+
+	@Override
+	public List<String> Mpendingrequests() {
+
+		try(Connection connection = ConnectionUtil.getConnection()){
+			
+			String sql = "SELECT * FROM \"TRANSACTION\"";
+			
+			PreparedStatement statement= connection.prepareStatement(sql);
+			
+			ResultSet result = statement.executeQuery();
+			
+			
+//			List<String> all_transactions = new ArrayList<>();
+			List<String> pending_transactions = new ArrayList<>();
+//			List<String> resolved_transactions = new ArrayList<>();
+			
+			String id = "";
+			
+			while(result.next()){
+				if(result.getString("T_STATUS").equals("PENDING")) {
+					pending_transactions.add(String.valueOf((result.getLong("T_ID"))));
+					pending_transactions.add(result.getString("T_NAME"));
+					id = result.getString("T_USER_ID");
+					pending_transactions.add(result.getString("T_STATUS"));
+					
+					String sql1 = "SELECT * FROM \"USER\" WHERE U_ID = ?";
+					
+					PreparedStatement statement1= connection.prepareStatement(sql1);
+					statement1.setLong(1, Long.parseLong(id));
+						
+					ResultSet result1 = statement1.executeQuery();
+					
+					if(result1.next()) {
+						pending_transactions.add(result1.getString("U_USERNAME"));
+					}
+				}
+			}
+			return pending_transactions;
+
+		}
+		
+		catch (SQLException e) {
+		}
+		return null;
+	}
+
+	@Override
+	public List<MTransactions> Mpendingrequests2(List<String> mallrequests) {
+		
+		if(mallrequests == null) {
+			List<MTransactions> requests = new ArrayList<MTransactions>();
+			requests.add(new MTransactions("none","none","none","none"));
+			return requests;
+		}
+		
+		List<MTransactions> requests = new ArrayList<MTransactions>();
+		MTransactions mtransaction = null;
+		
+		for(int i = 0; i < mallrequests.size()-3; i=i+4) {
+			String a = mallrequests.get(i);
+			String b = mallrequests.get(i+1);
+			String c = mallrequests.get(i+2);
+			String d = mallrequests.get(i+3);
+			mtransaction = new MTransactions(a,b,c,d);
+			requests.add(new MTransactions(a,b,c,d));
+		}
+		return requests;
+	}
+
+	@Override
+	public List<String> Macceptedrequests() {
+		try(Connection connection = ConnectionUtil.getConnection()){
+			
+			String sql = "SELECT * FROM \"TRANSACTION\"";
+			
+			PreparedStatement statement= connection.prepareStatement(sql);
+			
+			ResultSet result = statement.executeQuery();
+			
+			
+//			List<String> all_transactions = new ArrayList<>();
+			List<String> pending_transactions = new ArrayList<>();
+//			List<String> resolved_transactions = new ArrayList<>();
+			
+			String id = "";
+			
+			while(result.next()){
+				if(result.getString("T_STATUS").equals("ACCEPTED")) {
+					pending_transactions.add(String.valueOf((result.getLong("T_ID"))));
+					pending_transactions.add(result.getString("T_NAME"));
+					id = result.getString("T_USER_ID");
+					pending_transactions.add(result.getString("T_STATUS"));
+					
+					String sql1 = "SELECT * FROM \"USER\" WHERE U_ID = ?";
+					
+					PreparedStatement statement1= connection.prepareStatement(sql1);
+					statement1.setLong(1, Long.parseLong(id));
+						
+					ResultSet result1 = statement1.executeQuery();
+					
+					if(result1.next()) {
+						pending_transactions.add(result1.getString("U_USERNAME"));
+					}
+				}
+			}
+			return pending_transactions;
+
+		}
+		
+		catch (SQLException e) {
+		}
+		return null;
+	}
+
+	@Override
+	public List<MTransactions> Macceptedrequests2(List<String> mallrequests) {
+		if(mallrequests == null) {
+			List<MTransactions> requests = new ArrayList<MTransactions>();
+			requests.add(new MTransactions("none","none","none","none"));
+			return requests;
+		}
+		
+		List<MTransactions> requests = new ArrayList<MTransactions>();
+		MTransactions mtransaction = null;
+		
+		for(int i = 0; i < mallrequests.size()-3; i=i+4) {
+			String a = mallrequests.get(i);
+			String b = mallrequests.get(i+1);
+			String c = mallrequests.get(i+2);
+			String d = mallrequests.get(i+3);
+			mtransaction = new MTransactions(a,b,c,d);
+			requests.add(new MTransactions(a,b,c,d));
+		}
+		return requests;
+	}
+
+	@Override
+	public boolean updateStatus(String id, String choice) {
+		
+		
+		
+		try(Connection connection = ConnectionUtil.getConnection()){
+			int parameterIndex = 0;
+			String sql ="update \"TRANSACTION\" set T_STATUS = ? where T_ID = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			
+			statement.setString(++parameterIndex, choice);
+			statement.setInt(++parameterIndex, Integer.parseInt(id));
+			
+			ResultSet result = statement.executeQuery();
+			
+			
+			if(result.next()){
+				return true;
+			}
+			else {
+				
+			}
+		}
+		
+		catch (SQLException e) {
+		}
+		return false;
+	}
+
+	public static void main(String[] args) {
+	EmployeeRepository repository = new EmployeeRepositoryJdbc();
+	repository.updateUser("Ashoka", "udon");
+	}
+	
+	public List<String> viewall(){
+		
+		try(Connection connection = ConnectionUtil.getConnection()){
+			
+			List<String> all = new ArrayList<String>();
+			
+			String sql = "SELECT * FROM \"USER\"";
+			
+			PreparedStatement statement= connection.prepareStatement(sql);
+			ResultSet result = statement.executeQuery();
+			
+			while(result.next()){
+					if(result.getString("U_TYPE").equals("Employee")) {
+						String username=result.getString("U_USERNAME");
+						all.add(username);
+					}
+			}
+			return all;
+			
+		} catch(SQLException e) {
+			return null;
+		}
+	}
+	
+//	List<String> thing = repository.Mallrequests();
+//	System.out.println(thing);
+//	System.out.println(repository.Mallrequests2(thing));
 //	
 //	System.out.println(repository.getId("Ashoka"));
 //	

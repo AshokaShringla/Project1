@@ -15,7 +15,7 @@ import com.revature.repository.EmployeeRepositoryJdbc;
 /**
  * Servlet implementation class UpdateServlet
  */
-@WebServlet(name = "UpdateInfoServlet", urlPatterns = { "/UpdateInfo" })
+@WebServlet("/UpdateEmployeeInfo")
 public class UpdateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -35,7 +35,9 @@ public class UpdateServlet extends HttpServlet {
 		
 		HttpSession session=request.getSession(); 
 		
-		employee.updateUser((String) session.getAttribute("employee"), name);
+		String Remployee = (String) session.getAttribute("username");
+		
+		employee.updateUser(Remployee , name);
 		
         session.setAttribute("employee",name);
         session.setAttribute("username", name);

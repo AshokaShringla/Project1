@@ -5,36 +5,35 @@
 <html>
 <head>
 <% //In case, if Admin session is not set, redirect to Login page
-if((request.getSession(false).getAttribute("employee")== null) )
+if((session.getAttribute("manager")== null) )
 {
 %>
 <jsp:forward page="index.jsp"></jsp:forward>
 <%} %>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>All Requests</title>
 </head>
 <body>
-Welcome <%=session.getAttribute("employee") %>, here is your information
+Welcome <%=session.getAttribute("manager") %>, here are all employee requests
 
 <table id="table" border="1">
 <tr id="ttr">
+<th> ID </th>
 <th> Description </th>
 <th> Status </th>
+<th> Employee </th>
 </tr>
-<tr>
-<td> <%=session.getAttribute("employee") %> </td>
-<td> Employee </td>
-</tr>
+<c:forEach items="${AllRequests}" var="requests">
+    <tr>
+      <td>${requests.id}</td>
+      <td>${requests.description}</td>
+      <td>${requests.status}</td>
+      <td>${requests.name}</td>
+    </tr>
+  </c:forEach>
 </table>
 
-Update name:
- <form method="post" action="UpdateEmployeeInfo">
-Name
-<input type="text" name="user" required/>
-<input type="submit" value="Change"></input><input type="reset" value="Reset"></input>
-        </form>
-        
-<div style="text-align: right"><a href="<%=request.getContextPath()%>/employeeProfile.jsp">Back</a></div>
+<div style="text-align: right"><a href="<%=request.getContextPath()%>/managerProfile.jsp">Back</a></div>
 <div style="text-align: right"><a href="<%=request.getContextPath()%>/Logout">Logout</a></div>
 </body>
 </html>

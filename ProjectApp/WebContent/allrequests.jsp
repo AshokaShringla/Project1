@@ -4,6 +4,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+<% //In case, if Admin session is not set, redirect to Login page
+if((request.getSession(false).getAttribute("employee")== null) )
+{
+%>
+<jsp:forward page="index.jsp"></jsp:forward>
+<%} %>
 <meta charset="ISO-8859-1">
 <title>All Requests</title>
 </head>
@@ -17,8 +23,8 @@ Welcome <%=session.getAttribute("employee") %>, here are your requests
 </tr>
 <c:forEach items="${AllRequests}" var="requests">
     <tr>
-      <td>${requests.description}"</td>
-      <td>${requests.status}"</td>
+      <td>${requests.description}</td>
+      <td>${requests.status}</td>
     </tr>
   </c:forEach>
 </table>

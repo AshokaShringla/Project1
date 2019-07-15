@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.revature.model.Employee;
+import com.revature.model.MTransactions;
 import com.revature.model.Transactions;
 
 public interface EmployeeRepository {
@@ -35,6 +36,22 @@ public interface EmployeeRepository {
 	public boolean submit(String name, Transactions transaction);
 	
 	public boolean updateUser(String username, String newname);
+	
+	public List<String> Mallrequests();
+	
+	public List<MTransactions> Mallrequests2(List<String> allrequests);
+
+	public List<String> Mpendingrequests();
+	
+	public List<MTransactions> Mpendingrequests2(List<String> allrequests);
+	
+	public List<String> Macceptedrequests();
+	
+	public List<MTransactions> Macceptedrequests2(List<String> allrequests);
+	
+	public List<String> viewall();
+	
+	public boolean updateStatus(String id, String choices);
 	
 	public Long count();
 }
